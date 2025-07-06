@@ -11,7 +11,7 @@ require (
 	github.com/hashicorp/go-version v1.7.0
 	github.com/onsi/ginkgo/v2 v2.22.2
 	github.com/onsi/gomega v1.36.2
-	github.com/openshift/api v0.0.0-20250327202946-4521905c611e
+	github.com/openshift/api v0.0.0-20250620092249-a8cbc218cd2c
 	github.com/openshift/hypershift v0.1.56
 	github.com/openshift/hypershift/api v0.0.0-20250402075621-3283bb995a26
 	github.com/openshift/library-go v0.0.0-20250203131244-80620876b7c2
@@ -116,7 +116,7 @@ require (
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0 // indirect
-	github.com/openshift/client-go v0.0.0-20250330132942-bc2e3c2af6e1 // indirect
+	github.com/openshift/client-go v0.0.0-20250701093119-6d8e53714277 // indirect
 	github.com/openshift/cluster-api-provider-agent/api v0.0.0-20250324094320-633957e81ebd // indirect
 	github.com/openshift/custom-resource-status v1.1.3-0.20220503160415-f2fdb4999d87 // indirect
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c // indirect
