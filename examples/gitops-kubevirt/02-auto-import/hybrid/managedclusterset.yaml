@@ -1,0 +1,11 @@
+apiVersion: cluster.open-cluster-management.io/v1beta2
+kind: ManagedClusterSet
+metadata:
+  name: hostedclusters
+  # Note: ManagedClusterSet is cluster-scoped but common to put in 'clusters' namespace
+  namespace: clusters
+spec:
+  clusterSelector:
+    labelSelector:
+      matchLabels:
+        clusterSet: hostedclusters

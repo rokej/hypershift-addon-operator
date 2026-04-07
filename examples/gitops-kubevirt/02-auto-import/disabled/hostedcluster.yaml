@@ -1,0 +1,50 @@
+apiVersion: hypershift.openshift.io/v1beta1
+kind: HostedCluster
+metadata:
+  name: example-hcp-disabled
+  namespace: clusters
+  annotations:
+    # This annotation disables auto-import of ManagedCluster
+    # Empty value means: "Don't auto-create a ManagedCluster"
+    # We will create and manage ManagedCluster explicitly in Git
+    cluster.open-cluster-management.io/managedcluster-name: ""
+spec:
+  release:
+    image: quay.io/openshift-release-dev/ocp-release:4.17.0-ec.2-x86_64
+
+  pullSecret:
+    name: pull-secret
+
+  sshKey:
+    name: ssh-key
+
+  networking:
+    clusterNetwork:
+    - cidr: 10.132.0.0/14
+    serviceNetwork:
+    - cidr: 172.31.0.0/16
+    networkType: OVNKubernetes
+
+  platform:
+    type: KubeVirt
+    kubevirt:
+      baseDomain: example.com
+
+  services:
+  - service: APIServer
+    servicePublishingStrategy:
+      type: LoadBalancer
+  - service: OAuthServer
+    servicePublishingStrategy:
+      type: Route
+  - service: Konnectivity
+    servicePublishingStrategy:
+      type: Route
+  - service: Ignition
+    servicePublishingStrategy:
+      type: Route
+
+  dns:
+    baseDomain: example.com
+
+  infraID: example-hcp-disabled

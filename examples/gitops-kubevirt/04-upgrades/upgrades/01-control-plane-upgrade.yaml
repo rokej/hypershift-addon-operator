@@ -1,0 +1,97 @@
+# Upgrade 1: Control Plane Upgrade
+# Upgrades HostedCluster from 4.16.1 to 4.17.0
+#
+# Important: This upgrades ONLY the control plane (etcd, API server, controllers, etc.)
+# Nodes will remain at 4.16.1 until a separate NodePool upgrade is applied.
+#
+# OpenShift Upgrade Skew Policy:
+# - Control plane can be up to N+2 ahead of nodes
+# - 4.17.0 control plane can manage 4.16.x and 4.15.x nodes
+# - After control plane upgrade, upgrade nodes within reasonable time (within 2-3 weeks)
+#
+# Upgrade Safety:
+# 1. Control plane upgrade is generally safe and low-risk
+# 2. Single-level version jumps are recommended (4.16 → 4.17, not 4.16 → 4.18)
+# 3. Extended multi-level jumps (4.16 → 4.18+) are not supported
+# 4. Always test in non-production first
+#
+# Prerequisites:
+# - Review upgrade notes: https://docs.openshift.com/container-platform/4.17/release_notes/
+# - Ensure cluster is healthy: oc get clusteroperators
+# - Have valid quay.io credentials (pull-secret)
+# - Scheduled maintenance window recommended
+#
+# Timeline:
+# - Preparation: 5-10 minutes
+# - Control plane update: 15-30 minutes
+#   - etcd upgrade: 5-10 minutes
+#   - API server replacement: 5-10 minutes
+#   - Controller restart: 5-10 minutes
+# - Total: 20-40 minutes
+#
+# Monitoring:
+# - Watch ClusterVersion: oc get clusterversion -w
+# - Check control plane pods: oc get pods -n clusters-example-hcp -w
+# - Monitor API availability
+#
+# Rollback (if needed):
+# - Revert to 4.16.1 image in hostedcluster.yaml
+# - Control plane will downgrade (risky, not recommended in production)
+# - NodePool downgrade more complex, coordinate with support
+#
+# Usage:
+#   oc apply -f upgrades/01-control-plane-upgrade.yaml
+#
+# Or via Git:
+#   1. Edit base/hostedcluster.yaml
+#   2. Change image to 4.17.0
+#   3. Commit and push
+#   4. Watch: oc get clusterversion -w
+#
+---
+apiVersion: hypershift.openshift.io/v1beta1
+kind: HostedCluster
+metadata:
+  name: example-hcp
+  namespace: clusters
+spec:
+  release:
+    # Upgraded from 4.16.1 to 4.17.0
+    image: quay.io/openshift-release-dev/ocp-release:4.17.0-x86_64
+
+  pullSecret:
+    name: pull-secret
+
+  sshKey:
+    name: ssh-key
+
+  networking:
+    clusterNetwork:
+    - cidr: 10.132.0.0/14
+    serviceNetwork:
+    - cidr: 172.31.0.0/16
+    networkType: OVNKubernetes
+
+  platform:
+    type: KubeVirt
+    kubevirt:
+      baseDomain: example.com
+
+  services:
+  - service: APIServer
+    servicePublishingStrategy:
+      type: LoadBalancer
+  - service: OAuthServer
+    servicePublishingStrategy:
+      type: Route
+  - service: Konnectivity
+    servicePublishingStrategy:
+      type: Route
+  - service: Ignition
+    servicePublishingStrategy:
+      type: Route
+
+  dns:
+    baseDomain: example.com
+
+  infraID: example-hcp
